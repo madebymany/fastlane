@@ -5,6 +5,42 @@ RAILS = %w(boarding refresher enhancer)
 
 SECONDS_PER_DAY = 60 * 60 * 24
 
+task :yolo do
+
+  ENV['LOGGING_PROJECT'] = 'fastlane-166414'
+  puts 'hi'
+  puts 'hi'
+  puts 'hi'
+  puts 'hi'
+  puts 'hi'
+
+  begin
+    raise 'ThisError'
+  rescue => ex
+    require 'json'
+    json = {
+      'eventTime': Time.now.to_datetime.rfc3339,
+      'serviceContext': {
+        'service': 'fastlane',
+        'version': '1.0'
+      },
+      'message': "#{ex.message}: #{ex.backtrace.to_s}",
+    }.to_json
+    require 'faraday'
+
+    api_key = 'AIzaSyAMACPfuI-wi4grJWEZjcPvhfV2Rhmddwo'
+    connection = Faraday.new(url: "https://clouderrorreporting.googleapis.com/v1beta1/projects/fastlane-166414/events:report?key=#{api_key}")
+
+    response = connection.post do |request|
+      request.headers['Content-Type'] = 'application/json'
+      request.body = json
+    end
+
+    require 'pry'; binding.pry
+    puts ''
+  end
+end
+
 task :rubygems_admins do
   names = ["KrauseFx", "ohayon", "asfalcone", "mpirri", "mfurtak", "taquitos"]
   (GEMS + ["krausefx-shenzhen", "commander-fastlane"]).each do |gem_name|
