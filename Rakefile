@@ -8,14 +8,8 @@ SECONDS_PER_DAY = 60 * 60 * 24
 task :yolo do
 
   ENV['LOGGING_PROJECT'] = 'fastlane-166414'
-  puts 'hi'
-  puts 'hi'
-  puts 'hi'
-  puts 'hi'
-  puts 'hi'
-
   begin
-    raise 'ThisError'
+    raise 'SomeError'
   rescue => ex
     require 'json'
     json = {
@@ -24,7 +18,7 @@ task :yolo do
         'service': 'fastlane',
         'version': '1.0'
       },
-      'message': "#{ex.message}: #{ex.backtrace.to_s}",
+      'message': "#{ex.message}: #{ex.backtrace.join("\n")}",
     }.to_json
     require 'faraday'
 
@@ -35,9 +29,6 @@ task :yolo do
       request.headers['Content-Type'] = 'application/json'
       request.body = json
     end
-
-    require 'pry'; binding.pry
-    puts ''
   end
 end
 
