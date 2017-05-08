@@ -21,7 +21,7 @@ module FastlaneCore
       fastlane_path = Gem.loaded_specs['fastlane'].full_gem_path
       backtrace.map do |frame|
         if frame.include?(fastlane_path)
-          frame.gsub!(fastlane_path, '')
+          frame.gsub!(fastlane_path, 'FASTLANE_PATH')
         end
         frame
       end
