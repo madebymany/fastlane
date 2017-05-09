@@ -21,7 +21,6 @@ module FastlaneCore
 
     def self.report_crash(type: nil, exception: nil)
       return unless enabled?
-      message = "Some Crash"
       backtrace = BacktraceSanitizer.sanitize(type: type, backtrace: exception.backtrace)
       send_report(message: "#{TYPES[type]}", backtrace: backtrace)
     end
