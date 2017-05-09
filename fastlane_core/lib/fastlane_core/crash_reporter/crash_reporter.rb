@@ -3,7 +3,7 @@ require 'json'
 
 module FastlaneCore
   class CrashReporter
-    STACKDRIVER_API_KEY = 'AIzaSyAMACPfuI-wi4grJWEZjcPvhfV2Rhmddwo'
+    STACKDRIVER_API_KEY = ENV['STACKDRIVER_API_KEY']
 
     TYPES = {
       user_error: '[USER_ERROR]',
@@ -26,6 +26,14 @@ module FastlaneCore
     end
 
     def self.send_report(message: nil, backtrace: nil)
+      connection = Faraday.new(url: "https://clouderrorreporting.googleapis.com/v1beta1/projects/fastlane-166414/events:report?key=#{STACKDRIVER_API_KEY}")
+      connection.post do |request|
+        request.headers['Content-Type'] = 'application/json'
+        request.body = report_payload(message: message, backtrace: backtrace)
+      end
+    end
+
+    def report_payload(message: nil, backtrace: nil)
       json = {
         'eventTime': Time.now.to_datetime.rfc3339,
         'serviceContext': {
@@ -34,13 +42,6 @@ module FastlaneCore
         },
         'message': "#{message}: #{backtrace.join("\n")}",
       }.to_json
-
-      connection = Faraday.new(url: "https://clouderrorreporting.googleapis.com/v1beta1/projects/fastlane-166414/events:report?key=#{STACKDRIVER_API_KEY}")
-
-      connection.post do |request|
-        request.headers['Content-Type'] = 'application/json'
-        request.body = json
-      end
     end
   end
 end
