@@ -19,14 +19,16 @@ module FastlaneCore
 
     def self.remove_fastlane_gem_path(backtrace: nil)
       fastlane_path = Gem.loaded_specs['fastlane'].full_gem_path
+      return backtrace unless fastlane_path
       backtrace.map do |frame|
         frame.gsub(fastlane_path, '[fastlane_path]')
       end
     end
 
     def self.remove_gem_home_path(backtrace: nil)
+      return backtrace unless Gem.dir
       backtrace.map do |frame|
-        frame.gsub(ENV['GEM_HOME'], '[gem_home]')
+        frame.gsub(Gem.dir, '[gem_home]')
       end
     end
 
